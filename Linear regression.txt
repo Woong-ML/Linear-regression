@@ -1,0 +1,51 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from sklearn import datasets, linear_model
+from sklearn.metrics import mean_squared_error, r2_score
+%matplotlib inline
+
+from google.colab import files
+uploaded = files.upload()
+
+for fn in uploaded.keys():
+    print('User uploaded file "{name}" with length {length} bytes'.format(
+        name=fn, length=len(uploaded[fn])
+    ))
+
+LOAD = pd.read_csv('LOAD.txt',usecols=["X(800)"])
+print(LOAD.shape)
+print(LOAD.columns)
+LOAD.head()
+
+from google.colab import files
+uploaded = files.upload()
+
+for fn in uploaded.keys():
+    print('User uploaded file "{name}" with length {length} bytes'.format(
+        name=fn, length=len(uploaded[fn])
+    ))
+
+NO = pd.read_csv('NO.txt')
+print(NO.shape)
+NO.head()
+
+LOAD_train = LOAD[:-20]
+LOAD_test = LOAD[-20:]
+
+NO_train = NO[:-20]
+NO_test = NO[-20:]
+
+regr = linear_model.LinearRegression()
+regr.fit(LOAD_train, NO_train)
+NO_pred = regr.predict(LOAD_test)
+
+print('Coefficients:\n', regr.coef_)
+print("Mean_squared_error: %.2f" % mean_squared_error(NO_test,NO_pred))
+print('Variance socre: %.2f' % r2_score(NO_test, NO_pred))
+
+plt.scatter(LOAD_train, NO_train, color='black')
+plt.plot(LOAD_test, NO_pred, color='blue', linewidth=1)
+plt.xticks()
+plt.yticks()
+plt.show()
